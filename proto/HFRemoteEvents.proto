@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+option java_package = "com.inforeach.eltrader.tms.api.grpc";
+
+import "TMSRemoteCommon.proto";
+import "TMSRemoteEvents.proto";
+
+message TargetListEvent {
+    oneof event {
+        TargetListAddedEvent added = 1;
+        TargetListUpdatedEvent updated = 2;
+        TargetListRemovedEvent removed = 3;
+        TargetListFilteredOutEvent filteredOut = 4;
+
+        FeedStatus feedStatus = 5;
+    }
+
+    message TargetListAddedEvent {
+        string targetListName = 1;
+        Fields fields = 2;
+    }
+
+    message TargetListUpdatedEvent {
+        string targetListName = 1;
+        Fields fields = 2;
+    }
+
+    message TargetListRemovedEvent {
+        string targetListName = 1;
+    }
+
+    // Happens when particular target list portfolio is "filtered out" due
+    // to some changes (so it doesn't match subscription filter anymore).
+    // That is, application subscribed to target list data with filtering expression,
+    // and as a result of some changes in target list's fields the target list
+    // stops satisfying the filtering expression.
+    message TargetListFilteredOutEvent {
+        string targetListName = 1;
+    }
+}
+
+message OrderDataEvent {
+    oneof event {
+        OrderAddedEvent added = 1;
+        OrderUpdatedEvent updated = 2;
+        OrderFilteredOutEvent filteredOut = 3;
+        FeedStatus feedStatus = 4;
+    }
+
+    message OrderAddedEvent {
+        int64 orderId = 1;
+        Fields fields = 2;
+    }
+
+    message OrderUpdatedEvent {
+        int64 orderId = 1;
+        Fields fields = 2;
+    }
+
+    //See comments for target list "filtered out" event. Same is for the orders subscription.
+    message OrderFilteredOutEvent {
+        int64 orderId = 1;
+    }
+}
+
+message StrategyDataEvent {
+    oneof event {
+        StrategyDataAddedEvent added = 1;
+        StrategyDataUpdatedEvent updated = 2;
+    }
+
+    message StrategyDataAddedEvent {
+        string strategyName = 1;
+        Fields fields = 2;
+    }
+
+    message StrategyDataUpdatedEvent {
+        string strategyName = 1;
+        Fields fields = 2;
+    }
+}

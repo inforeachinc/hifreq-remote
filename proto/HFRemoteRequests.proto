@@ -1,0 +1,162 @@
+syntax = "proto3";
+
+option java_package = "com.inforeach.eltrader.tms.api.grpc";
+
+import "TMSRemoteCommon.proto";
+
+message TargetIds {
+    repeated int64 targetId = 1;
+}
+
+message OrderIds {
+    repeated int64 orderId = 1;
+}
+
+message OrdersPurged {
+    repeated bool isPurged = 1;
+}
+
+message SendOrdersRequest {
+    string managerName = 1;
+    repeated FIXFields message = 2;
+}
+
+message OrderResults {
+    repeated Result result = 1;
+
+    message Result {
+        oneof result {
+            Fields order = 1;
+            string error = 2;
+        }
+    }
+}
+
+message OrdersRequest {
+    repeated int64 orderId = 1;
+    repeated FIXFields message = 2;
+}
+
+message CancelAllOrdersRequest {
+    string filter = 1;
+    FIXFields message = 2;
+}
+
+message TargetListsRequest {
+    repeated string targetListName = 1;
+}
+
+message AddTargetListsRequest {
+    repeated string targetListName = 1;
+    repeated Fields fields = 2;
+}
+
+message ModifyTargetListsRequest {
+    repeated string targetListName = 1;
+    repeated Fields fields = 2;
+}
+
+message SendTargetListOrdersRequest {
+    repeated string targetListName = 1;
+    string managerName = 2;
+    FIXFields message = 3;
+}
+
+message AddTargetsRequest {
+    string targetListName = 1; //A name of the target list to add targets to.
+    repeated Fields fields = 2; //Fields of the added target(s)
+}
+
+// Note: if some string field has to be set to null value, need to use "<NULL>" constant for it
+message ModifyTargetsRequest {
+    repeated int64 targetId = 1; //Id(s) of the target(s) to modify (target ids returned when new targets are added).
+    repeated Fields fields = 2; //If only one fields container - all targets will be modified with it. Otherwise there must be a field container per target.
+}
+
+message TargetResults {
+    repeated Result result = 1;
+
+    message Result {
+        oneof result {
+            Fields target = 1;
+            string error = 2;
+        }
+    }
+}
+
+message TargetIdResults {
+    repeated Result result = 1;
+
+    message Result {
+        oneof result {
+            int64 targetId = 1;
+            string error = 2;
+        }
+    }
+}
+
+message OrderIdResults {
+    repeated Result result = 1;
+
+    message Result {
+        oneof result {
+            int64 orderId = 1;
+            string error = 2;
+        }
+    }
+}
+
+//TODO rename to SendTargetOrdersRequest
+message SendTargetsRequest {
+    string managerName = 1;
+    repeated int64 targetId = 2;
+    repeated FIXFields message = 3;
+}
+
+message RemoveAllTargetsFromListsRequest {
+    repeated string targetListName = 1;
+    bool removeEmptyTargetListsAsWell = 2;
+}
+
+message GetStrategyDataRequest {
+    string strategyName = 1;
+}
+
+message ModifyStrategyDataRequest {
+    string strategyName = 1;
+    Fields fields = 2;
+}
+
+message SubscribeToTargetListDataRequest {
+    bool skipRecordUpdates = 1; //Set it to "true" in case listener is not interested in record updates.
+    string filter = 2; //Filtering expression. Events sent for target lists matching the filter.
+    repeated string field = 3;//Fields to be sent. All fields will be sent if not set.
+}
+
+message SubscribeToTargetDataRequest {
+    bool skipRecordUpdates = 1; //Set it to "true" in case listener is not interested in record updates.
+    string filter = 2;  //Filtering expression. Events sent for targets matching the filter.
+    repeated string field = 3; //Fields to be sent. All fields will be sent if not set.
+}
+
+message SubscribeToOrderRequest {
+    string filter = 1; //Filtering expression. Events sent for orders matching the filter.
+    repeated string field = 2; //Fields to be sent. All fields will be sent if not set.
+}
+
+message SendAuditRecord {
+    enum Severity {
+        UNDEFINED = 0; // default
+        Error = 1;
+        Warning = 2;
+        ActivityHigh = 4;
+        ActivityMedium = 8;
+        ActivityLow = 16;
+    }
+
+    string text = 1;
+    Severity severity = 2;
+    string strategyName = 3; // optional
+    int64 targetId = 4; // optional
+    int64 orderId = 5; // optional
+}

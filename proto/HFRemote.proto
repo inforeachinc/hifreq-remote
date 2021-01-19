@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+option java_package = "com.inforeach.eltrader.tms.api.grpc";
+option java_multiple_files = false;
+option java_outer_classname = "HFRemoteProto";
+
+import "TMSRemoteCommon.proto";
+import "TMSRemoteEvents.proto";
+import "TMSRemoteRequests.proto";
+import "HFRemoteRequests.proto";
+import "HFRemoteEvents.proto";
+
+service HFRemote {
+    // Sets current user for whole gRPC session
+    rpc login (LoginRequest) returns (Void);
+
+    //START SNIPPET: Ping API
+    // Indended for the periodic calls from the client to make sure the connectivity with the server is maintained.
+    // The service will return the parameter value.
+    rpc ping (PingInfo) returns (PingInfo);
+    //END SNIPPET: Ping API
+
+    //START SNIPPET: Alerts API
+    // Posts alert message to user's view. See request comments for the parameters details.
+    rpc postAlertMessage (PostAlertMessageRequest) returns (Void);
+    //END SNIPPET: Alerts API
+
+    rpc getOrders (OrderIds) returns (Records);
+    rpc getNonPurgedOrders (OrderIds) returns (Records);
+    rpc unpurgeOrders (OrderIds) returns (Void);
+    rpc areOrdersPurged (OrderIds) returns (OrdersPurged);
+
+    rpc sendOrders (SendOrdersRequest) returns (Void);
+    rpc sendAndGetOrders (SendOrdersRequest) returns (OrderResults);
+    rpc modifyOrders (OrdersRequest) returns (Void);
+    rpc rejectOrders (OrdersRequest) returns (Void);
+    rpc rejectOrderCancels (OrdersRequest) returns (Void);
+    rpc confirmOrders (OrdersRequest) returns (Void);
+    rpc fillOrders (OrdersRequest) returns (Void);
+    rpc replaceOrders (OrdersRequest) returns (Void);
+    rpc outOnOrders (OrdersRequest) returns (Void);
+    rpc cancelOrders (OrdersRequest) returns (Void);
+    rpc cancelAllOrders (CancelAllOrdersRequest) returns (Void);
+    rpc sendMessages (OrdersRequest) returns (Void);
+    rpc postMessages (OrdersRequest) returns (Void);
+
+    rpc getTargetLists (TargetListsRequest) returns (Records);
+    //TODO: document that fields can contain optional target manager id or target manager name fields to determine TM. Otherwise the default one will be used.
+    rpc addTargetLists (AddTargetListsRequest) returns (Void);
+    rpc addAndGetTargetLists (AddTargetListsRequest) returns (Records);
+    rpc sendTargetListOrders (SendTargetListOrdersRequest) returns (Void);
+    rpc sendAndGetTargetListOrders (SendTargetListOrdersRequest) returns (OrderResults);
+    rpc modifyTargetLists (ModifyTargetListsRequest) returns (Void);
+    rpc removeTargetLists (TargetListsRequest) returns (Void);
+
+    rpc getTargets (TargetIds) returns (Records);
+    rpc addTargets (AddTargetsRequest) returns (Void);
+    rpc addAndGetTargets (AddTargetsRequest) returns (TargetResults);
+    rpc modifyTargets (ModifyTargetsRequest) returns (Void);
+    rpc sendTargetOrders (SendTargetsRequest) returns (Void);
+    rpc sendAndGetTargetOrders (SendTargetsRequest) returns (OrderResults);
+    rpc removeTargets (TargetIds) returns (Void);
+    rpc removeAllTargetsFromLists (RemoveAllTargetsFromListsRequest) returns (Void);
+
+    rpc getStrategyData (GetStrategyDataRequest) returns (Fields);
+    rpc addStrategyData (Fields) returns (Void);
+    rpc addAndGetStrategyData (Fields) returns (Fields);
+    rpc modifyStrategyData(ModifyStrategyDataRequest) returns (Void);
+
+    rpc subscribeToTargetListData (stream SubscribeToTargetListDataRequest) returns (stream TargetListEvent);
+    rpc subscribeToTargetData (stream SubscribeToTargetDataRequest) returns (stream TargetEvent);
+    rpc subscribeToOutboundOrderData (stream SubscribeToOrderRequest) returns (stream OrderDataEvent);
+    rpc subscribeToInboundOrderData (stream SubscribeToOrderRequest) returns (stream OrderDataEvent);
+    rpc subscribeToStrategyData (stream Void) returns (stream StrategyDataEvent);
+
+    rpc sendAuditRecord(SendAuditRecord) returns (Void);
+
+    //START SNIPPET: Reporting API
+    // Checks if report is registered on report manager
+    rpc isReportAvailable (ReportRequest) returns (ReportAvailableResponse);
+    // Creates report from specification and registers it on report manager
+    rpc createReport (CreateReportRequest) returns (Void);
+    // Unregisters report from report manager
+    rpc removeReport (ReportRequest) returns (Void);
+    //END SNIPPET: Reporting API
+
+    //START SNIPPET: Security Master API
+    rpc getInstrumentInfos (InstrumentInfosRequest) returns (InstrumentInfosResponse);
+    rpc getInstrumentInfosByAlternateId (InstrumentInfosByAlternateIdRequest) returns (InstrumentInfosResponse);
+    rpc getInstrumentAlternateIdSources (Void) returns (IdsResponse);
+
+    rpc getExchangeIds (Void) returns (IdsResponse);
+    rpc getExchangeInfos (ExchangeInfosRequest) returns (ExchangeInfosResponse);
+    rpc getExchangeInfosByAlternateId (ExchangeInfosRequest) returns (ExchangeInfosResponse);
+
+    rpc getVolumeCurve (VolumeCurveRequest) returns (VolumeCurveResponse);
+    //END SNIPPET: Security Master API
+
+    rpc getMarketDataRecords (SubscribeForMarketDataRequest) returns (Records);
+
+    rpc getCustomDataRecords (SubscribeForCustomDataRequest) returns (Records);
+    rpc sendCommandToCustomDataProviders(SendCommandToCustomDataProvidersRequest) returns (Void);
+
+    //START SNIPPET: Subscription API
+    rpc subscribeForInstrumentPositions (stream SubscribeForInstrumentPositionsRequest) returns (stream InstrumentPositionEvent);
+    rpc subscribeForCategoryPositions (stream SubscribeForCategoryPositionsRequest) returns (stream CategoryPositionEvent);
+    rpc subscribeForCashPositions (stream SubscribeForCashPositionsRequest) returns (stream CashPositionEvent);
+
+    rpc subscribeForFIXMessages(stream SubscribeForFIXMessagesRequest) returns (stream FIXEvent);
+    rpc subscribeForFIXMessagesFrom(stream SubscribeForFIXMessagesFromRequest) returns (stream FIXEvent);
+
+    rpc subscribeForMarketData(stream SubscribeForMarketDataRequest) returns (stream MarketDataEvent);
+    rpc subscribeForCustomData(stream SubscribeForCustomDataRequest) returns (stream CustomDataEvent);
+    rpc subscribeForForexQuotes(stream SubscribeForForexQuotesRequest) returns (stream ForexQuoteEvent);
+
+    rpc subscribeForReport(stream SubscribeForReportRequest) returns (stream RecordEvent);
+    //END SNIPPET: Subscription API
+}

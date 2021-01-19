@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+option java_package = "com.inforeach.eltrader.tms.api.grpc";
+option java_multiple_files = false;
+option java_outer_classname = "HFTradingProto";
+
+import "TMSRemoteCommon.proto";
+import "TMSRemoteEvents.proto";
+import "TMSRemoteRequests.proto";
+import "HFRemoteRequests.proto";
+import "HFRemoteEvents.proto";
+
+service HFTrading {
+    // Sets current user for whole gRPC session
+    rpc login (LoginRequest) returns (Void);
+
+    rpc ping (PingInfo) returns (PingInfo);
+
+    // Posts alert message to user's view. See request comments for the parameters details.
+    rpc postAlertMessage (PostAlertMessageRequest) returns (Void);
+
+    rpc getOrders (OrderIds) returns (Records);
+    rpc getNonPurgedOrders (OrderIds) returns (Records);
+    rpc unpurgeOrders (OrderIds) returns (Void);
+    rpc areOrdersPurged (OrderIds) returns (OrdersPurged);
+
+    rpc sendOrders (SendOrdersRequest) returns (OrderIdResults);
+    rpc sendAndGetOrders (SendOrdersRequest) returns (OrderResults);
+    rpc modifyOrders (OrdersRequest) returns (Void);
+    rpc rejectOrders (OrdersRequest) returns (Void);
+    rpc rejectOrderCancels (OrdersRequest) returns (Void);
+    rpc confirmOrders (OrdersRequest) returns (Void);
+    rpc fillOrders (OrdersRequest) returns (Void);
+    rpc replaceOrders (OrdersRequest) returns (Void);
+    rpc outOnOrders (OrdersRequest) returns (Void);
+    rpc cancelOrders (OrdersRequest) returns (Void);
+    rpc cancelAllOrders (CancelAllOrdersRequest) returns (Void);
+    rpc sendMessages (OrdersRequest) returns (Void);
+    rpc postMessages (OrdersRequest) returns (Void);
+
+    rpc getTargetLists (TargetListsRequest) returns (Records);
+    rpc addTargetLists (AddTargetListsRequest) returns (Void);
+    rpc addAndGetTargetLists (AddTargetListsRequest) returns (Records);
+    rpc sendTargetListOrders (SendTargetListOrdersRequest) returns (OrderIdResults);
+    rpc sendAndGetTargetListOrders (SendTargetListOrdersRequest) returns (OrderResults);
+    rpc modifyTargetLists (ModifyTargetListsRequest) returns (Void);
+    rpc removeTargetLists (TargetListsRequest) returns (Void);
+
+    rpc getTargets (TargetIds) returns (Records);
+    //add targets
+    rpc addTargets (AddTargetsRequest) returns (TargetIdResults);
+    rpc addAndGetTargets (AddTargetsRequest) returns (TargetResults);
+    rpc modifyTargets (ModifyTargetsRequest) returns (Void);
+    rpc sendTargetOrders (SendTargetsRequest) returns (OrderIdResults);
+    rpc sendAndGetTargetOrders (SendTargetsRequest) returns (OrderResults);
+    rpc removeTargets (TargetIds) returns (Void);
+    rpc removeAllTargetsFromLists (RemoveAllTargetsFromListsRequest) returns (Void);
+
+    rpc getStrategyData (GetStrategyDataRequest) returns (Fields);
+    //TODO have a dedicated request instead of just Fields. Similar to other add... requests
+    rpc addStrategyData (Fields) returns (Void);
+    rpc addAndGetStrategyData (Fields) returns (Fields);
+    rpc modifyStrategyData(ModifyStrategyDataRequest) returns (Void);
+
+    //TODO TMS has subscribeFor while here we have subscribeTo
+    rpc subscribeToTargetListData (stream SubscribeToTargetListDataRequest) returns (stream TargetListEvent);
+    rpc subscribeToTargetData (stream SubscribeToTargetDataRequest) returns (stream TargetEvent);
+    rpc subscribeToOutboundOrderData (stream SubscribeToOrderRequest) returns (stream OrderDataEvent);
+    rpc subscribeToInboundOrderData (stream SubscribeToOrderRequest) returns (stream OrderDataEvent);
+    rpc subscribeToStrategyData (stream Void) returns (stream StrategyDataEvent);
+
+    rpc sendAuditRecord(SendAuditRecord) returns (Void);
+}
